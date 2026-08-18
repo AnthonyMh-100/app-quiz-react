@@ -3,61 +3,37 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router'
-import {
-  Comunication,
-  Home,
-  History,
-  IntelligenceEmocional,
-  ThinkingCritical,
-  LogicReasoning,
-} from './quiz/components'
-import { QuizMultiPageDataState } from './quiz/context'
+import { Home, Quiz, QuizPreview } from './quiz/components'
+import { QuizFormDataState, QuizMultiPageDataState } from './quiz/context'
+import { QUIZ_CONFIG_LIST } from './quiz/utils/quizConfig'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route
-          path="/history"
+          path="/"
           element={
-            <QuizMultiPageDataState>
-              <History />
-            </QuizMultiPageDataState>
+            <QuizFormDataState>
+              <App />
+            </QuizFormDataState>
           }
         />
-        <Route
-          path="/comunication"
-          element={
-            <QuizMultiPageDataState>
-              <Comunication />
-            </QuizMultiPageDataState>
-          }
-        />
-        <Route
-          path="/intelligence-emocional"
-          element={
-            <QuizMultiPageDataState>
-              <IntelligenceEmocional />
-            </QuizMultiPageDataState>
-          }
-        />
-        <Route
-          path="/critical-thinking"
-          element={
-            <QuizMultiPageDataState>
-              <ThinkingCritical />
-            </QuizMultiPageDataState>
-          }
-        />
-        <Route
-          path="/logical-reasoning"
-          element={
-            <QuizMultiPageDataState>
-              <LogicReasoning />
-            </QuizMultiPageDataState>
-          }
-        />
+        <Route path="/home" element={<Home />} />
+
+        {QUIZ_CONFIG_LIST.map(config => (
+          <Route key={config.key} path={config.path}>
+            <Route
+              index
+              element={
+                <QuizMultiPageDataState>
+                  <Quiz config={config} />
+                </QuizMultiPageDataState>
+              }
+            />
+            <Route path="preview" element={<QuizPreview config={config} />} />
+          </Route>
+        ))}
       </Routes>
     </BrowserRouter>
   </StrictMode>

@@ -1,4 +1,4 @@
-import { Component, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { FormTabs } from './quiz-ui/FormTabs'
@@ -7,6 +7,7 @@ import { FormPageTwo } from './quiz-ui/Form/FormPageTwo'
 import { FormPageThree } from './quiz-ui/Form/FormPageThree'
 import { useQuizFormData } from './quiz/hooks/useQuizFormData'
 import { DEFAULT_FROM } from './quiz/utils/constants'
+import { getQuizUser, saveQuizUser } from './quiz/utils/utils'
 import { useNavigate } from 'react-router'
 
 const data = [
@@ -34,14 +35,20 @@ function App() {
 
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (getQuizUser()) {
+      navigate('/home', { replace: true })
+    }
+  }, [navigate])
+
   const handleBack = () => {
     setForm(DEFAULT_FROM)
     setPage(0)
   }
   const handleSubmit = e => {
     e.preventDefault()
+    saveQuizUser({ name: form.name, email: form.email })
     navigate('/home')
-    console.log(form)
   }
 
   return (

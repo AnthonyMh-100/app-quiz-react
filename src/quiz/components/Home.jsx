@@ -1,282 +1,172 @@
-import { NavLink } from 'react-router'
-import styled from 'styled-components'
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { QuizHeader } from '../../quiz-ui/QuizHeader'
-import { CardQuiz } from './CardQuiz'
-import { useMemo } from 'react'
+import { QUIZ_CONFIG_LIST, QUIZ_FILTERS } from '../utils/quizConfig'
+import {
+  clearQuizUser,
+  getQuizUser,
+  loadAllQuizProgress,
+  loadQuizResults,
+} from '../utils/utils'
+import {
+  Main,
+  Hero,
+  HeroCopy,
+  Eyebrow,
+  Title,
+  Subtitle,
+  Logout,
+  Section,
+  SectionHeader,
+  SectionTitle,
+  Filters,
+  FilterChip,
+  ContinueGrid,
+  ContinueCard,
+  ContinueIcon,
+  ContinueBody,
+  ContinueName,
+  ContinueMeta,
+  ContinueArrow,
+  Grid,
+  Card,
+  TopRow,
+  Icon,
+  Chip,
+  CardContent,
+  Label,
+  Description,
+  MetaRow,
+  Meta,
+  BottomRow,
+  Stats,
+  StatResult,
+  StatNew,
+  Arrow,
+} from './Home.styles'
 
 export const Home = () => {
-  const CARDS_QUIZ = CardQuiz()
-  const currentQuiz = useMemo(() => {
-    const data = localStorage.getItem('quizData')
-    return data ? JSON.parse(data) : {}
-  }, [])
+  const navigate = useNavigate()
+  const user = useMemo(() => getQuizUser(), [])
+  const currentQuiz = useMemo(() => loadQuizResults(), [])
+  const quizProgress = useMemo(() => loadAllQuizProgress(), [])
+  const [filter, setFilter] = useState('Todas')
+
+  const inProgress = QUIZ_CONFIG_LIST.filter(c => quizProgress[c.key])
+
+  const filteredCards = QUIZ_CONFIG_LIST.filter(
+    c => filter === 'Todas' || c.title === filter
+  )
+
+  const handleLogout = () => {
+    clearQuizUser()
+    navigate('/', { replace: true })
+  }
 
   return (
     <>
       <QuizHeader currentQuiz={currentQuiz} />
       <Main>
-        <Intro>
-          <Title>Elige tu Quiz</Title>
-          <Subtitle>Practica a tu ritmo y revisa tu progreso en cada categoría.</Subtitle>
-        </Intro>
-        <Grid>
-          {CARDS_QUIZ.map(({ id, key, title, description, path, icon }) => (
-            <Card to={path} key={id} aria-label={`Abrir quiz de ${title}`}>
-              <Icon>{icon}</Icon>
-              <ContentWrapper>
-                <CardContent>
-                  <Label>{title}</Label>
-                  <Description>{description}</Description>
-                </CardContent>
+        <Hero>
+          <HeroCopy>
+            <Eyebrow>Bienvenido{user?.name ? `, ${user.name}` : ''}</Eyebrow>
+            <Title>Elige tu Quiz</Title>
+            <Subtitle>
+              Practica a tu ritmo y revisa tu progreso en cada categoría. Tu avance se guarda
+              automáticamente.
+            </Subtitle>
+          </HeroCopy>
+          {user && (
+            <Logout onClick={handleLogout}>Salir</Logout>
+          )}
+        </Hero>
 
-                <Stats aria-label="Estado del quiz">
-                  {currentQuiz[key] ? (
-                    <>
-                      <StatCorrect>✔ {currentQuiz[key].correct} correctas</StatCorrect>
-                      <StatWrong>✖ {currentQuiz[key].wrong} incorrectas</StatWrong>
-                    </>
-                  ) : (
-                    <StatNew>Nuevo</StatNew>
-                  )}
-                </Stats>
-              </ContentWrapper>
+        {inProgress.length > 0 && (
+          <Section>
+            <SectionTitle>Continúa donde lo dejaste</SectionTitle>
+            <ContinueGrid>
+              {inProgress.map(card => (
+                <ContinueCard
+                  key={card.key}
+                  to={card.path}
+                  $accent={card.accent}
+                  aria-label={`Continuar quiz de ${card.title}`}
+                >
+                  <ContinueIcon $accent={card.accent}>
+                    <card.icon />
+                  </ContinueIcon>
+                  <ContinueBody>
+                    <ContinueName>{card.title}</ContinueName>
+                    <ContinueMeta>
+                      Pregunta {quizProgress[card.key].page + 1} de {card.questions.length}
+                    </ContinueMeta>
+                  </ContinueBody>
+                  <ContinueArrow $accent={card.accent}>Continuar →</ContinueArrow>
+                </ContinueCard>
+              ))}
+            </ContinueGrid>
+          </Section>
+        )}
 
-              <Arrow>Comenzar →</Arrow>
-            </Card>
-          ))}
-        </Grid>
+        <Section>
+          <SectionHeader>
+            <SectionTitle>Todos los quizzes</SectionTitle>
+            <Filters aria-label="Filtrar por categoría">
+              {QUIZ_FILTERS.map(label => (
+                <FilterChip
+                  key={label}
+                  $active={filter === label}
+                  onClick={() => setFilter(label)}
+                  aria-pressed={filter === label}
+                >
+                  {label}
+                </FilterChip>
+              ))}
+            </Filters>
+          </SectionHeader>
+
+          <Grid>
+            {filteredCards.map(card => (
+                <Card
+                  to={card.previewPath}
+                  key={card.key}
+                  $accent={card.accent}
+                  aria-label={`Ver quiz de ${card.title}`}
+                >
+                  <TopRow>
+                    <Icon $accent={card.accent}>
+                      <card.icon />
+                    </Icon>
+                    <Chip $accent={card.accent}>{card.difficulty}</Chip>
+                  </TopRow>
+
+                  <CardContent>
+                    <Label>{card.title}</Label>
+                    <Description>{card.description}</Description>
+                  </CardContent>
+
+                  <MetaRow>
+                    <Meta>{card.questions.length} preguntas</Meta>
+                  </MetaRow>
+
+                  <BottomRow>
+                    <Stats aria-label="Estado del quiz">
+                      {currentQuiz[card.key] ? (
+                        <StatResult $accent={card.accent}>
+                          Mejor puntaje: <strong>{currentQuiz[card.key].total}%</strong>
+                        </StatResult>
+                      ) : (
+                        <StatNew $accent={card.accent}>Nuevo</StatNew>
+                      )}
+                    </Stats>
+
+                    <Arrow $accent={card.accent}>Ver quiz →</Arrow>
+                  </BottomRow>
+                </Card>
+              ))}
+          </Grid>
+        </Section>
       </Main>
     </>
   )
 }
-const Main = styled.main`
-  min-height: 70vh;
-  width: 100%;
-  padding: 40px 24px 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background:
-    radial-gradient(circle at top, #eef2ff 0%, #f8fafc 40%),
-    linear-gradient(to bottom, #f8fafc, #ffffff);
-`
-
-const Intro = styled.div`
-  width: 100%;
-  max-width: 1100px;
-  margin-bottom: 28px;
-`
-
-const Title = styled.h1`
-  font-size: clamp(1.75rem, 2.2vw, 2.25rem);
-  font-weight: 750;
-  color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.02em;
-`
-
-const Subtitle = styled.p`
-  margin: 10px 0 0;
-  max-width: 62ch;
-  color: #475569;
-  line-height: 1.5;
-  font-size: 0.98rem;
-`
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 22px;
-  width: 100%;
-  max-width: 1100px;
-`
-
-const Card = styled(NavLink)`
-  position: relative;
-  padding: 22px 22px 18px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 14px;
-  min-height: 168px;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border: 1px solid rgba(99, 102, 241, 0.22);
-
-  text-decoration: none;
-  cursor: pointer;
-  overflow: hidden;
-
-  box-shadow:
-    0 12px 28px rgba(15, 23, 42, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: radial-gradient(circle at 20% 10%, rgba(99, 102, 241, 0.16), transparent 55%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-  }
-
-  &:hover {
-    transform: translateY(-4px);
-    border-color: rgba(99, 102, 241, 0.35);
-    box-shadow:
-      0 18px 44px rgba(99, 102, 241, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.65);
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-
-  &:focus-visible {
-    outline: 3px solid rgba(99, 102, 241, 0.45);
-    outline-offset: 3px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &::before {
-      transition: none;
-    }
-
-    &:hover {
-      transform: none;
-    }
-  }
-`
-
-const Icon = styled.div`
-  position: absolute;
-  top: 16px;
-  right: 16px;
-
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-
-  background: linear-gradient(135deg, #6366f1, #818cf8);
-  color: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 18px;
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
-
-  transition: transform 0.2s ease;
-
-  ${Card}:hover & {
-    transform: translateY(-1px);
-  }
-`
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-right: 56px;
-  flex: 1;
-`
-
-const CardContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`
-
-const Label = styled.h3`
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #0f172a;
-  text-align: left;
-  margin: 0;
-  letter-spacing: -0.01em;
-`
-
-const Description = styled.p`
-  font-size: 0.95rem;
-  color: #475569;
-  line-height: 1.45;
-  text-align: left;
-  margin: 0;
-`
-
-const Stats = styled.div`
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-`
-
-const StatBase = styled.span`
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  line-height: 1;
-`
-
-const StatCorrect = styled(StatBase)`
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-`
-
-const StatWrong = styled(StatBase)`
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-`
-
-const StatNew = styled(StatBase)`
-  background: rgba(99, 102, 241, 0.08);
-  color: #3730a3;
-  border: 1px solid rgba(99, 102, 241, 0.25);
-`
-
-const Arrow = styled.span`
-  margin-top: auto;
-  align-self: flex-end;
-
-  font-size: 14px;
-  font-weight: 600;
-  color: #6366f1;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(99, 102, 241, 0.18);
-
-  opacity: 0.92;
-  transform: translateY(2px);
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
-
-  ${Card}:hover & {
-    opacity: 1;
-    transform: translateY(0);
-    background: rgba(255, 255, 255, 0.8);
-    border-color: rgba(99, 102, 241, 0.28);
-  }
-`

@@ -1,16 +1,36 @@
-# React + Vite
+# Frontend Quiz
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicacion web de quizzes por categorias para practicar habilidades y medir progreso.
 
-Currently, two official plugins are available:
+## Funcionalidad principal
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Pantalla inicial con tarjetas de quizzes por categoria (por ejemplo: Historia, Comunicacion, Pensamiento Critico, etc.).
+- Flujo de quiz por paginas/preguntas con navegacion `Siguiente` y `Anterior`.
+- Validacion por pregunta: no permite avanzar ni terminar sin seleccionar una opcion.
+- Calculo de resultado al finalizar (porcentaje de aciertos).
+- Modal de cierre con puntaje final.
+- Persistencia del progreso y resultados en `localStorage`.
+- Visualizacion de estadisticas por categoria en la pantalla principal (correctas/incorrectas o estado nuevo).
 
-## React Compiler
+## Tecnologias usadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `React 19`: construccion de la interfaz y logica de componentes.
+- `React Router 7`: manejo de rutas y navegacion entre vistas.
+- `styled-components`: estilos encapsulados y UI responsive.
+- `Vite 7`: entorno de desarrollo y build.
+- `ESLint 9`: reglas de calidad de codigo.
 
-## Expanding the ESLint configuration
+## Scripts disponibles
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `npm run dev`: inicia el servidor de desarrollo.
+- `npm run build`: genera la version de produccion.
+- `npm run preview`: previsualiza el build de produccion.
+- `npm run lint`: ejecuta analisis estatico con ESLint.
+
+## Estructura general
+
+- `src/quiz/components`: vistas principales de cada quiz y componentes de apoyo.
+- `src/quiz-ui`: componentes reutilizables de interfaz del quiz.
+- `src/quiz/context`: manejo de estado global con Context API.
+- `src/quiz/hooks`: hooks personalizados para estado del formulario y quiz multipagina.
+- `src/quiz/utils`: constantes, utilidades y helpers de calculo/persistencia.

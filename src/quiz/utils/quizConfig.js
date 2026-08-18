@@ -1,0 +1,132 @@
+import {
+  QUIZ_COMUNICACIONES,
+  QUIZ_INTELIGENCIA_EMOCIONAL,
+  QUIZ_KEY,
+  QUIZ_LOGICA_Y_RAZONAMIENTO,
+  QUIZ_PENSAMIENTO_CRITICO,
+  QUIZ_QUESTION,
+} from './constants'
+import {
+  IconCommunication,
+  IconCriticalThinking,
+  IconEmotion,
+  IconHistory,
+  IconLogicalReasoning,
+} from './icons'
+
+const ACCENT = {
+  history: {
+    gradient: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+    soft: '#fffbeb',
+    softStrong: '#fef3c7',
+    border: 'rgba(245, 158, 11, 0.25)',
+    glow: 'rgba(245, 158, 11, 0.22)',
+    text: '#92400e',
+    shadow: '0 6px 16px rgba(245, 158, 11, 0.32)',
+  },
+  comunication: {
+    gradient: 'linear-gradient(135deg, #0ea5e9, #38bdf8)',
+    soft: '#f0f9ff',
+    softStrong: '#e0f2fe',
+    border: 'rgba(14, 165, 233, 0.25)',
+    glow: 'rgba(14, 165, 233, 0.22)',
+    text: '#0c4a6e',
+    shadow: '0 6px 16px rgba(14, 165, 233, 0.32)',
+  },
+  'intelligence-emocional': {
+    gradient: 'linear-gradient(135deg, #f43f5e, #fb7185)',
+    soft: '#fff1f2',
+    softStrong: '#ffe4e6',
+    border: 'rgba(244, 63, 94, 0.25)',
+    glow: 'rgba(244, 63, 94, 0.22)',
+    text: '#881337',
+    shadow: '0 6px 16px rgba(244, 63, 94, 0.32)',
+  },
+  'thinking-critical': {
+    gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+    soft: '#f5f3ff',
+    softStrong: '#ede9fe',
+    border: 'rgba(139, 92, 246, 0.25)',
+    glow: 'rgba(139, 92, 246, 0.22)',
+    text: '#4c1d95',
+    shadow: '0 6px 16px rgba(139, 92, 246, 0.32)',
+  },
+  'logical-reasoning': {
+    gradient: 'linear-gradient(135deg, #10b981, #34d399)',
+    soft: '#ecfdf5',
+    softStrong: '#d1fae5',
+    border: 'rgba(16, 185, 129, 0.25)',
+    glow: 'rgba(16, 185, 129, 0.22)',
+    text: '#064e3b',
+    shadow: '0 6px 16px rgba(16, 185, 129, 0.32)',
+  },
+}
+
+export const QUIZ_CONFIG = {
+  [QUIZ_KEY.HISTORY]: {
+    key: QUIZ_KEY.HISTORY,
+    title: 'Historia',
+    description: 'Pon a prueba tus conocimientos sobre eventos históricos importantes.',
+    path: '/history',
+    previewPath: '/history/preview',
+    icon: IconHistory,
+    accent: ACCENT.history,
+    questions: QUIZ_QUESTION,
+    difficulty: 'Media',
+  },
+  [QUIZ_KEY.COMUNICATION]: {
+    key: QUIZ_KEY.COMUNICATION,
+    title: 'Comunicación',
+    description: 'Aprende sobre los principios de la comunicación efectiva.',
+    path: '/comunication',
+    previewPath: '/comunication/preview',
+    icon: IconCommunication,
+    accent: ACCENT.comunication,
+    questions: QUIZ_COMUNICACIONES,
+    difficulty: 'Fácil',
+  },
+  [QUIZ_KEY.INTELLIGENCE_EMOCIONAL]: {
+    key: QUIZ_KEY.INTELLIGENCE_EMOCIONAL,
+    title: 'Inteligencia Emocional',
+    description: 'Desarrolla tu inteligencia emocional con este quiz interactivo.',
+    path: '/intelligence-emocional',
+    previewPath: '/intelligence-emocional/preview',
+    icon: IconEmotion,
+    accent: ACCENT['intelligence-emocional'],
+    questions: QUIZ_INTELIGENCIA_EMOCIONAL,
+    difficulty: 'Media',
+  },
+  [QUIZ_KEY.THINKING_CRITICAL]: {
+    key: QUIZ_KEY.THINKING_CRITICAL,
+    title: 'Pensamiento Crítico',
+    description: 'Evalúa tu capacidad de análisis y pensamiento crítico.',
+    path: '/critical-thinking',
+    previewPath: '/critical-thinking/preview',
+    icon: IconCriticalThinking,
+    accent: ACCENT['thinking-critical'],
+    questions: QUIZ_PENSAMIENTO_CRITICO,
+    difficulty: 'Difícil',
+  },
+  [QUIZ_KEY.LOGIC_REASONING]: {
+    key: QUIZ_KEY.LOGIC_REASONING,
+    title: 'Razonamiento Lógico',
+    description: 'Resuelve problemas usando lógica y patrones.',
+    path: '/logical-reasoning',
+    previewPath: '/logical-reasoning/preview',
+    icon: IconLogicalReasoning,
+    accent: ACCENT['logical-reasoning'],
+    questions: QUIZ_LOGICA_Y_RAZONAMIENTO,
+    difficulty: 'Difícil',
+  },
+}
+
+export const QUIZ_CONFIG_LIST = Object.values(QUIZ_CONFIG)
+
+export const QUIZ_FILTERS = [
+  'Todas',
+  'Historia',
+  'Comunicación',
+  'Inteligencia Emocional',
+  'Pensamiento Crítico',
+  'Razonamiento Lógico',
+]
